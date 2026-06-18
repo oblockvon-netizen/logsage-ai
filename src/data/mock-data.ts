@@ -51,7 +51,19 @@ export const recentThreats = [
     target: "auth-gateway-01",
     confidence: 96,
     status: "Needs review",
-    detectedAt: "2 min ago"
+    detectedAt: "2 min ago",
+    evidence: "52 failed SSH login attempts for root, deploy, and backup users within 8 minutes.",
+    aiPreview: "Likely brute-force activity against an exposed authentication service.",
+    summary: "A concentrated authentication attack was detected against auth-gateway-01 from a single external source.",
+    impact: "Successful access could expose administrative credentials, shell access, and downstream infrastructure paths.",
+    attackerBehavior: "The actor is rotating common usernames and attempting repeated password guesses against SSH.",
+    severityReasoning: "Critical severity is assigned because failed attempts were followed by one successful login pattern in the same window.",
+    recommendedNextSteps: [
+      "Block 203.0.113.42 at the edge firewall.",
+      "Review successful SSH sessions on auth-gateway-01.",
+      "Rotate credentials for targeted accounts and enforce MFA."
+    ],
+    analystNotes: "Correlate with VPN and endpoint logs to confirm whether the successful login created an interactive shell."
   },
   {
     id: "THR-1047",
@@ -62,7 +74,19 @@ export const recentThreats = [
     target: "linux-workload-07",
     confidence: 88,
     status: "Investigating",
-    detectedAt: "12 min ago"
+    detectedAt: "12 min ago",
+    evidence: "Unexpected sudo invocation occurred 46 seconds after a new shell session from an internal workstation.",
+    aiPreview: "Privilege escalation behavior may indicate a compromised internal account.",
+    summary: "An internal account initiated suspicious elevated commands shortly after interactive access began.",
+    impact: "An attacker with elevated privileges may alter services, extract secrets, or disable monitoring.",
+    attackerBehavior: "The sequence resembles post-compromise discovery followed by privilege escalation.",
+    severityReasoning: "High severity is appropriate because behavior occurred internally but has not yet shown confirmed persistence.",
+    recommendedNextSteps: [
+      "Inspect shell history and process lineage on linux-workload-07.",
+      "Validate whether the account owner initiated the session.",
+      "Check for new binaries, cron entries, and modified service files."
+    ],
+    analystNotes: "The source is internal, so prioritize identity validation before containment."
   },
   {
     id: "THR-1046",
@@ -73,7 +97,19 @@ export const recentThreats = [
     target: "api-edge",
     confidence: 74,
     status: "Queued",
-    detectedAt: "34 min ago"
+    detectedAt: "34 min ago",
+    evidence: "API token used from a new ASN with 4.3x the normal request volume and multiple 403 responses.",
+    aiPreview: "Token misuse or automation drift is possible based on location and request pattern.",
+    summary: "A normally low-volume token generated elevated API traffic from an unfamiliar network.",
+    impact: "Misused API tokens can expose customer data, trigger rate limits, or enable unauthorized changes.",
+    attackerBehavior: "The pattern suggests token replay, scripted enumeration, or a leaked credential being tested.",
+    severityReasoning: "Medium severity is assigned because the token generated anomalies but no confirmed sensitive access.",
+    recommendedNextSteps: [
+      "Rotate the affected API token.",
+      "Review endpoint paths accessed during the anomaly window.",
+      "Add token usage alerting by ASN and request volume."
+    ],
+    analystNotes: "Compare with deployment logs in case a legitimate service moved networks."
   },
   {
     id: "THR-1045",
@@ -84,7 +120,19 @@ export const recentThreats = [
     target: "web-front-03",
     confidence: 81,
     status: "Contained",
-    detectedAt: "51 min ago"
+    detectedAt: "51 min ago",
+    evidence: "Multiple requests included ../ traversal patterns targeting config and environment file paths.",
+    aiPreview: "Web reconnaissance is probing for path traversal and exposed configuration files.",
+    summary: "A web-facing service received repeated traversal probes against sensitive path patterns.",
+    impact: "Successful traversal may expose environment variables, application secrets, or source configuration.",
+    attackerBehavior: "The actor appears to be scanning common traversal payloads to identify vulnerable handlers.",
+    severityReasoning: "Medium severity is assigned because probes were blocked and no successful file read is visible.",
+    recommendedNextSteps: [
+      "Confirm web-front-03 returned only blocked or sanitized responses.",
+      "Add the source IP to temporary deny rules.",
+      "Review application routing for unsafe path joins."
+    ],
+    analystNotes: "The request pattern is noisy but worth correlating with WAF logs for neighboring IPs."
   }
 ];
 
