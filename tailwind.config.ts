@@ -28,6 +28,10 @@ const config: Config = {
         accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
         card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
         cyber: {
+          bg: "#020617",
+          bgSoft: "#030712",
+          panel: "#111827",
+          panelSoft: "#1E293B",
           sky: "#38BDF8",
           green: "#22C55E",
           warning: "#F59E0B",
@@ -35,6 +39,10 @@ const config: Config = {
           critical: "#DC2626",
           slate: "#0F172A"
         }
+      },
+      boxShadow: {
+        glow: "0 0 0 1px rgba(56, 189, 248, 0.12), 0 18px 70px rgba(56, 189, 248, 0.08)",
+        panel: "0 24px 80px rgba(2, 6, 23, 0.55)"
       },
       borderRadius: {
         lg: "var(--radius)",

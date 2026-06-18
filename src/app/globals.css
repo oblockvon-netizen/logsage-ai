@@ -27,6 +27,7 @@
     --ring: 199 89% 48%;
     --radius: 0.5rem;
     --font-satoshi: "Satoshi";
+    color-scheme: dark;
   }
 
   * {
@@ -34,7 +35,28 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply min-h-screen bg-background text-foreground antialiased;
+    background:
+      radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 32rem),
+      radial-gradient(circle at top right, rgba(34, 197, 94, 0.08), transparent 28rem),
+      linear-gradient(135deg, #020617 0%, #030712 48%, #0f172a 100%);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    @apply bg-primary/30 text-foreground;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply border border-slate-700/70 bg-slate-900/75 shadow-2xl shadow-sky-950/20 backdrop-blur-xl;
+  }
+
+  .glow-border {
+    box-shadow:
+      inset 0 1px 0 rgba(248, 250, 252, 0.04),
+      0 0 0 1px rgba(56, 189, 248, 0.08),
+      0 20px 70px rgba(2, 6, 23, 0.45);
   }
 }
