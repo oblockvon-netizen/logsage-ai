@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id           String    @id @default(uuid())
-  name         String
+  fullName     String
   email        String    @unique
   passwordHash String
   createdAt    DateTime  @default(now())
@@ -17,45 +17,60 @@ model User {
   logFiles     LogFile[]
   threats      Threat[]
   reports      Report[]
+
+  @@index([email])
 }
 
 model LogFile {
-  id        String   @id @default(uuid())
-  userId    String
-  fileName  String
-  mimeType  String
-  sizeBytes Int
-  status    String   @default("uploaded")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  threats   Threat[]
-  reports   Report[]
+  id         String   @id @default(uuid())
+  userId     String
+  filename   String
+  fileType   String
+  rawContent String
+  uploadedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  threats    Threat[]
+  reports    Report[]
+
+  @@index([userId])
+  @@index([uploadedAt])
 }
 
 model Threat {
-  id          String   @id @default(uuid())
-  userId      String
-  logFileId   String
-  title       String
-  severity    String
-  category    String
-  sourceIp    String?
-  evidence    String
-  explanation Json?
-  confidence  Float?
-  createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  logFile     LogFile  @relation(fields: [logFileId], references: [id], onDelete: Cascade)
+  id            String   @id @default(uuid())
+  userId        String
+  logFileId     String
+  threatType    String
+  severity      String
+  sourceIp      String?
+  description   String
+  aiExplanation String
+  evidence      String
+  score         Int
+  confidence    Float
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logFile       LogFile  @relation(fields: [logFileId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([logFileId])
+  @@index([severity])
+  @@index([threatType])
+  @@index([createdAt])
 }
 
 model Report {
-  id        String   @id @default(uuid())
-  userId    String
-  logFileId String
-  title     String
-  content   Json
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  logFile   LogFile  @relation(fields: [logFileId], references: [id], onDelete: Cascade)
+  id              String   @id @default(uuid())
+  userId          String
+  logFileId       String
+  title           String
+  summary         String
+  recommendations String[]
+  createdAt       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logFile         LogFile  @relation(fields: [logFileId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([logFileId])
+  @@index([createdAt])
 }
