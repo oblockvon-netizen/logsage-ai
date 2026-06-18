@@ -1,8 +1,12 @@
 import { Bell, ChevronDown, Search, ShieldCheck, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useCurrentUser } from "@/hooks/use-auth";
 
 export function Navbar() {
+  const { data } = useCurrentUser();
+  const user = data?.user;
+
   return (
     <header className="sticky top-0 z-20 border-b border-slate-800/80 bg-slate-950/70 px-4 py-3 backdrop-blur-xl lg:px-6">
       <div className="flex items-center gap-3">
@@ -22,8 +26,8 @@ export function Navbar() {
             <UserCircle className="h-5 w-5" />
           </div>
           <div className="leading-tight">
-            <p className="text-sm font-semibold text-white">Alex Morgan</p>
-            <p className="text-xs text-slate-500">SOC Analyst</p>
+            <p className="text-sm font-semibold text-white">{user?.fullName ?? "LogSage User"}</p>
+            <p className="text-xs text-slate-500">{user?.email ?? "Protected account"}</p>
           </div>
           <ChevronDown className="h-4 w-4 text-slate-500" />
         </div>

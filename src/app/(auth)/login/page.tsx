@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Loader2, Mail, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { AuthLayout } from "@/components/layout/auth-layout";
 import { Button } from "@/components/ui/button";
@@ -17,11 +19,31 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
+import { api } from "@/lib/api";
+import { setAccessToken } from "@/lib/token-storage";
 import { loginSchema, type LoginFormValues } from "@/lib/validations";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const loginMutation = useMutation({
+    mutationFn: api.login,
+    onSuccess: async (data) => {
+      setAccessToken(data.accessToken);
+      await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+      toast({ title: "Signed in", description: "Welcome back to LogSage AI." });
+      router.push("/dashboard");
+    },
+    onError: (error) => {
+      const message = error instanceof Error ? error.message : "Login failed.";
+      setSubmitError(message);
+      toast({ title: "Login failed", description: message, variant: "error" });
+    }
+  });
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -33,14 +55,7 @@ export default function LoginPage() {
 
   async function onSubmit(values: LoginFormValues) {
     setSubmitError(null);
-    await new Promise((resolve) => setTimeout(resolve, 900));
-
-    if (values.email.toLowerCase() === "error@logsage.ai") {
-      setSubmitError("Mock login failed. Use any other email to preview the success state.");
-      return;
-    }
-
-    form.reset({ email: values.email, password: "" });
+    loginMutation.mutate(values);
   }
 
   return (
@@ -101,9 +116,9 @@ export default function LoginPage() {
               )}
             />
 
-            <Button type="submit" className="w-full" size="lg" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-              {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
+            <Button type="submit" className="w-full" size="lg" disabled={loginMutation.isPending}>
+              {loginMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+              {loginMutation.isPending ? "Signing in..." : "Sign in"}
             </Button>
           </form>
         </Form>

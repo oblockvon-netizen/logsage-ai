@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Loader2, Mail, ShieldPlus, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { AuthLayout } from "@/components/layout/auth-layout";
 import { Button } from "@/components/ui/button";
@@ -18,12 +20,37 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
+import { api } from "@/lib/api";
+import { setAccessToken } from "@/lib/token-storage";
 import { registerSchema, type RegisterFormValues } from "@/lib/validations";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const registerMutation = useMutation({
+    mutationFn: (values: RegisterFormValues) =>
+      api.register({
+        fullName: values.fullName,
+        email: values.email,
+        password: values.password
+      }),
+    onSuccess: async (data) => {
+      setAccessToken(data.accessToken);
+      await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+      toast({ title: "Account created", description: "Your LogSage AI workspace is ready." });
+      router.push("/dashboard");
+    },
+    onError: (error) => {
+      const message = error instanceof Error ? error.message : "Registration failed.";
+      setSubmitError(message);
+      toast({ title: "Registration failed", description: message, variant: "error" });
+    }
+  });
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -37,19 +64,7 @@ export default function RegisterPage() {
 
   async function onSubmit(values: RegisterFormValues) {
     setSubmitError(null);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (values.email.toLowerCase() === "taken@logsage.ai") {
-      setSubmitError("Mock registration failed. This email is already reserved in the demo.");
-      return;
-    }
-
-    form.reset({
-      fullName: values.fullName,
-      email: values.email,
-      password: "",
-      confirmPassword: ""
-    });
+    registerMutation.mutate(values);
   }
 
   return (
@@ -158,9 +173,9 @@ export default function RegisterPage() {
               )}
             />
 
-            <Button type="submit" className="w-full" size="lg" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldPlus className="h-4 w-4" />}
-              {form.formState.isSubmitting ? "Creating account..." : "Create normal user account"}
+            <Button type="submit" className="w-full" size="lg" disabled={registerMutation.isPending}>
+              {registerMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldPlus className="h-4 w-4" />}
+              {registerMutation.isPending ? "Creating account..." : "Create normal user account"}
             </Button>
           </form>
         </Form>
