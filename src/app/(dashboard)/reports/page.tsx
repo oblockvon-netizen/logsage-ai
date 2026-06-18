@@ -10,6 +10,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
 import { api, type ApiReport } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -41,7 +42,7 @@ export default function ReportsPage() {
           <h1 className="mt-2 text-3xl font-black text-white">Reports</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Generate and review backend incident reports from analyzed logs.</p>
         </div>
-        <Button disabled={!latestLog || generateMutation.isPending} onClick={() => latestLog && generateMutation.mutate(latestLog.id)}>
+        <Button className="w-full sm:w-auto" disabled={!latestLog || generateMutation.isPending} onClick={() => latestLog && generateMutation.mutate(latestLog.id)}>
           {generateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
           Generate from latest log
         </Button>
@@ -53,7 +54,7 @@ export default function ReportsPage() {
 
       {reports.length ? (
         <>
-          <section className="grid gap-4 lg:grid-cols-3">
+          <section className="grid gap-5 lg:grid-cols-3">
             {reports.map((report) => <ReportCard key={report.id} report={report} selected={report.id === selectedReport?.id} onSelect={() => setSelectedReportId(report.id)} />)}
           </section>
           {selectedReport ? <ReportDetail report={selectedReport} /> : null}
@@ -65,7 +66,7 @@ export default function ReportsPage() {
 
 function ReportCard({ report, selected, onSelect }: { report: ApiReport; selected: boolean; onSelect: () => void }) {
   return (
-    <Card role="button" tabIndex={0} onClick={onSelect} className={cn("cursor-pointer p-5 transition hover:border-sky-400/50", selected && "border-sky-400/70 bg-sky-400/10")}>
+    <Card role="button" tabIndex={0} onClick={onSelect} onKeyDown={(event) => event.key === "Enter" && onSelect()} className={cn("cursor-pointer p-5 transition duration-200 hover:-translate-y-0.5 hover:border-sky-400/50", selected && "border-sky-400/70 bg-sky-400/10")}>
       <FileText className="h-6 w-6 text-sky-300" />
       <h2 className="mt-4 text-lg font-bold text-white">{report.title}</h2>
       <p className="mt-2 text-sm text-slate-500">{new Date(report.createdAt).toLocaleString()}</p>
@@ -78,7 +79,7 @@ function ReportDetail({ report }: { report: ApiReport }) {
   const timeline = Array.isArray(report.timelineOfSuspiciousActivity) ? report.timelineOfSuspiciousActivity as Array<{ time: string; event: string }> : [];
   const severity = report.severityBreakdown && typeof report.severityBreakdown === "object" ? report.severityBreakdown as Record<string, number> : {};
   return (
-    <section className="mt-4 grid gap-4 xl:grid-cols-[0.72fr_1.28fr]">
+    <section className="mt-5 grid gap-5 xl:grid-cols-[0.72fr_1.28fr]">
       <AnimatedCard className="h-fit">
         <h2 className="text-2xl font-black text-white">{report.title}</h2>
         <p className="mt-3 text-sm leading-6 text-slate-400">{report.executiveSummary}</p>
@@ -114,5 +115,15 @@ function Bullets({ items }: { items: string[] }) {
 }
 
 function State({ text, error }: { text: string; error?: boolean }) {
-  return <div className={`glass-panel rounded-lg p-8 text-center text-sm ${error ? "text-red-300" : "text-slate-400"}`}>{text}</div>;
+  if (text.toLowerCase().includes("loading")) {
+    return (
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Skeleton className="h-48" />
+        <Skeleton className="h-48" />
+        <Skeleton className="h-48" />
+      </div>
+    );
+  }
+
+  return <div className={`empty-state ${error ? "border-red-400/40 text-red-300" : ""}`}>{text}</div>;
 }

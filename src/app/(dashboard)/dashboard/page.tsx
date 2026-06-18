@@ -54,15 +54,15 @@ const severityBadge = {
 export default function DashboardPage() {
   return (
     <DashboardLayout>
-      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-300">Protected dashboard</p>
-          <h1 className="mt-2 text-3xl font-black text-white">SOC analyst command center</h1>
+          <h1 className="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl">SOC analyst command center</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
             Monitor uploaded logs, triage threats, and review AI-generated investigation context using mock security telemetry.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-3">
+        <div className="flex w-full items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-3 sm:w-auto">
           <Clock3 className="h-4 w-4 text-emerald-300" />
           <div>
             <p className="text-xs text-slate-500">Last analysis run</p>
@@ -77,7 +77,7 @@ export default function DashboardPage() {
           return (
             <Card key={stat.label} className="p-5">
               <div className="flex items-center justify-between">
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm text-slate-400">{stat.label}</p>
                   <p className="mt-3 text-3xl font-black text-white">{stat.value}</p>
                 </div>
@@ -94,7 +94,7 @@ export default function DashboardPage() {
         })}
       </section>
 
-      <section className="mt-4 grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+      <section className="mt-5 grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
         <ChartCard title="Threat severity chart" subtitle="Distribution by current triage level">
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
@@ -103,7 +103,7 @@ export default function DashboardPage() {
                   <Cell key={entry.name} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={tooltipStyle} />
+              <Tooltip contentStyle={tooltipStyle} itemStyle={tooltipItemStyle} />
             </PieChart>
           </ResponsiveContainer>
           <div className="grid grid-cols-2 gap-2">
@@ -121,31 +121,31 @@ export default function DashboardPage() {
 
         <ChartCard title="Threat type chart" subtitle="Top detection categories from mock analysis">
           <ResponsiveContainer width="100%" height={330}>
-            <BarChart data={threatTypeDistribution}>
-              <CartesianGrid stroke="#1F2937" strokeDasharray="3 3" vertical={false} />
+            <BarChart data={threatTypeDistribution} margin={{ top: 8, right: 8, left: -18, bottom: 6 }}>
+              <CartesianGrid stroke="#1F2937" strokeDasharray="4 6" vertical={false} />
               <XAxis dataKey="name" stroke="#64748B" tickLine={false} axisLine={false} fontSize={12} />
               <YAxis stroke="#64748B" tickLine={false} axisLine={false} fontSize={12} />
-              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(56, 189, 248, 0.08)" }} />
+              <Tooltip contentStyle={tooltipStyle} itemStyle={tooltipItemStyle} cursor={{ fill: "rgba(56, 189, 248, 0.08)" }} />
               <Bar dataKey="value" radius={[6, 6, 0, 0]} fill="#38BDF8" />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
       </section>
 
-      <section className="mt-4 grid gap-4 xl:grid-cols-2">
+      <section className="mt-5 grid gap-5 xl:grid-cols-2">
         <ChartCard title="Logs analyzed over time chart" subtitle="Volume processed during the current day">
           <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={logsAnalyzedOverTime}>
+            <AreaChart data={logsAnalyzedOverTime} margin={{ top: 8, right: 8, left: -14, bottom: 0 }}>
               <defs>
                 <linearGradient id="logsGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.5} />
                   <stop offset="95%" stopColor="#38BDF8" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
-              <CartesianGrid stroke="#1F2937" strokeDasharray="3 3" vertical={false} />
+              <CartesianGrid stroke="#1F2937" strokeDasharray="4 6" vertical={false} />
               <XAxis dataKey="time" stroke="#64748B" tickLine={false} axisLine={false} fontSize={12} />
               <YAxis stroke="#64748B" tickLine={false} axisLine={false} fontSize={12} />
-              <Tooltip contentStyle={tooltipStyle} />
+              <Tooltip contentStyle={tooltipStyle} itemStyle={tooltipItemStyle} />
               <Area type="monotone" dataKey="logs" stroke="#38BDF8" strokeWidth={2} fill="url(#logsGradient)" />
             </AreaChart>
           </ResponsiveContainer>
@@ -153,11 +153,11 @@ export default function DashboardPage() {
 
         <ChartCard title="Threats over time chart" subtitle="Critical, high, and medium detections by day">
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={threatsOverTime}>
-              <CartesianGrid stroke="#1F2937" strokeDasharray="3 3" vertical={false} />
+            <LineChart data={threatsOverTime} margin={{ top: 8, right: 8, left: -14, bottom: 0 }}>
+              <CartesianGrid stroke="#1F2937" strokeDasharray="4 6" vertical={false} />
               <XAxis dataKey="day" stroke="#64748B" tickLine={false} axisLine={false} fontSize={12} />
               <YAxis stroke="#64748B" tickLine={false} axisLine={false} fontSize={12} />
-              <Tooltip contentStyle={tooltipStyle} />
+              <Tooltip contentStyle={tooltipStyle} itemStyle={tooltipItemStyle} />
               <Line type="monotone" dataKey="critical" stroke="#DC2626" strokeWidth={2.5} dot={false} />
               <Line type="monotone" dataKey="high" stroke="#EF4444" strokeWidth={2.5} dot={false} />
               <Line type="monotone" dataKey="medium" stroke="#F59E0B" strokeWidth={2.5} dot={false} />
@@ -166,9 +166,9 @@ export default function DashboardPage() {
         </ChartCard>
       </section>
 
-      <section className="mt-4 grid gap-4 xl:grid-cols-[1.35fr_0.65fr]">
+      <section className="mt-5 grid gap-5 xl:grid-cols-[1.35fr_0.65fr]">
         <AnimatedCard className="p-0">
-          <div className="flex items-center justify-between border-b border-slate-800 p-5">
+          <div className="flex flex-col gap-3 border-b border-slate-800 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-bold text-white">Recent threats table</h2>
               <p className="mt-1 text-sm text-slate-500">Latest analyst queue from mock detections</p>
@@ -189,10 +189,10 @@ export default function DashboardPage() {
               </thead>
               <tbody className="divide-y divide-slate-800">
                 {recentThreats.map((threat) => (
-                  <tr key={threat.id} className="transition hover:bg-slate-900/60">
+                  <tr key={threat.id} className="transition duration-200 hover:bg-slate-900/70">
                     <td className="px-5 py-4">
                       <p className="font-semibold text-white">{threat.name}</p>
-                      <p className="mt-1 text-xs text-slate-500">{threat.id} · {threat.type} · {threat.detectedAt}</p>
+                      <p className="mt-1 text-xs text-slate-500">{threat.id} / {threat.type} / {threat.detectedAt}</p>
                     </td>
                     <td className="px-5 py-4">
                       <Badge variant={severityBadge[threat.severity as keyof typeof severityBadge]}>{threat.severity}</Badge>
@@ -230,9 +230,9 @@ export default function DashboardPage() {
         </AnimatedCard>
       </section>
 
-      <section className="mt-4">
+      <section className="mt-5">
         <AnimatedCard className="p-0">
-          <div className="flex items-center justify-between border-b border-slate-800 p-5">
+          <div className="flex flex-col gap-3 border-b border-slate-800 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-bold text-white">Recent uploads</h2>
               <p className="mt-1 text-sm text-slate-500">Mock log ingestion history</p>
@@ -241,7 +241,7 @@ export default function DashboardPage() {
           </div>
           <div className="grid gap-3 p-5 md:grid-cols-2 xl:grid-cols-4">
             {uploads.map((upload) => (
-              <div key={upload.file} className="rounded-lg border border-slate-800 bg-slate-950/50 p-4">
+              <div key={upload.file} className="rounded-lg border border-slate-800 bg-slate-950/50 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-sky-400/30 hover:bg-slate-900/70">
                 <p className="truncate font-semibold text-white">{upload.file}</p>
                 <p className="mt-2 text-xs text-slate-500">{upload.uploadedAt}</p>
                 <div className="mt-4 flex items-center justify-between">
@@ -279,5 +279,10 @@ const tooltipStyle = {
   background: "rgba(2, 6, 23, 0.94)",
   border: "1px solid rgba(51, 65, 85, 0.9)",
   borderRadius: "8px",
-  color: "#F8FAFC"
+  color: "#F8FAFC",
+  boxShadow: "0 18px 50px rgba(2, 6, 23, 0.45)"
+};
+
+const tooltipItemStyle = {
+  color: "#E2E8F0"
 };

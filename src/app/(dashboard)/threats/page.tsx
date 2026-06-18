@@ -7,6 +7,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { api, type ApiThreat } from "@/lib/api";
 import { threatFilterSchema } from "@/lib/validations";
 
@@ -40,12 +41,12 @@ export default function ThreatsPage() {
           <h1 className="mt-2 text-3xl font-black text-white">Threats</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Backend detections from analyzed logs.</p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg border border-red-400/20 bg-red-500/10 px-4 py-3 text-red-100">
+        <div className="flex w-full items-center gap-2 rounded-lg border border-red-400/20 bg-red-500/10 px-4 py-3 text-red-100 sm:w-auto">
           <ShieldAlert className="h-5 w-5" /><p className="text-sm font-bold">{threats.filter((threat) => threat.severity === "critical").length} critical</p>
         </div>
       </div>
 
-      <div className="glass-panel mb-4 rounded-lg p-5">
+      <div className="glass-panel mb-5 rounded-lg p-4 sm:p-5">
         <div className="grid gap-3 lg:grid-cols-[1fr_auto_auto]">
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-slate-500" />
@@ -73,7 +74,7 @@ export default function ThreatsPage() {
               </thead>
               <tbody className="divide-y divide-slate-800">
                 {filteredThreats.map((threat) => (
-                  <tr key={threat.id} className="hover:bg-slate-900/60">
+                  <tr key={threat.id} className="transition duration-200 hover:bg-slate-900/60">
                     <td className="px-5 py-4"><p className="font-semibold text-white">{threat.threatType}</p><p className="mt-1 text-xs text-slate-500">{threat.score}/100 score</p></td>
                     <td className="px-5 py-4"><Badge variant={severityBadge[threat.severity as keyof typeof severityBadge] ?? "muted"}>{threat.severity}</Badge></td>
                     <td className="px-5 py-4 font-mono text-xs text-slate-300">{threat.sourceIp ?? "unknown"}</td>
@@ -93,18 +94,28 @@ export default function ThreatsPage() {
 }
 
 function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: string[] }) {
-  return <label className="grid gap-1"><span className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</span><select value={value} onChange={(e) => onChange(e.target.value)} className="h-10 min-w-44 rounded-md border border-slate-700 bg-slate-950/70 px-3 text-sm text-slate-100">{options.map((option) => <option key={option} value={option}>{option === "all" ? "All" : option}</option>)}</select></label>;
+  return <label className="grid gap-1"><span className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</span><select value={value} onChange={(e) => onChange(e.target.value)} className="h-10 w-full min-w-0 rounded-md border border-slate-700 bg-slate-950/70 px-3 text-sm text-slate-100 outline-none transition hover:border-slate-500 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 lg:min-w-44">{options.map((option) => <option key={option} value={option}>{option === "all" ? "All" : option}</option>)}</select></label>;
 }
 
 function State({ text, error }: { text: string; error?: boolean }) {
-  return <div className={`flex min-h-56 flex-col items-center justify-center p-8 text-center text-sm ${error ? "text-red-300" : "text-slate-500"}`}><FileSearch className="mb-3 h-10 w-10" />{text}</div>;
+  if (text.toLowerCase().includes("loading")) {
+    return (
+      <div className="grid gap-3 p-5">
+        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-14 w-full" />
+      </div>
+    );
+  }
+
+  return <div className={`empty-state m-5 ${error ? "border-red-400/40 text-red-300" : ""}`}><FileSearch className="mb-3 h-10 w-10" />{text}</div>;
 }
 
 function ThreatModal({ threat, onClose }: { threat: ApiThreat; onClose: () => void }) {
   const explanation = threat.aiExplanation ?? {};
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-4 py-6 backdrop-blur-sm">
-      <div className="glass-panel max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-lg p-5">
+      <div className="glass-panel max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-lg p-4 sm:p-5">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div><Badge variant={severityBadge[threat.severity as keyof typeof severityBadge] ?? "muted"}>{threat.severity}</Badge><h2 className="mt-3 text-2xl font-black text-white">{threat.threatType}</h2></div>
           <Button size="icon" variant="ghost" onClick={onClose}><X className="h-5 w-5" /></Button>

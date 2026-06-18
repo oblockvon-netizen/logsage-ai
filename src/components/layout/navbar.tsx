@@ -1,15 +1,18 @@
-import { Bell, ChevronDown, Search, ShieldCheck, UserCircle } from "lucide-react";
+import { Bell, ChevronDown, Menu, Search, ShieldCheck, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCurrentUser } from "@/hooks/use-auth";
 
-export function Navbar() {
+export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { data } = useCurrentUser();
   const user = data?.user;
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-800/80 bg-slate-950/70 px-4 py-3 backdrop-blur-xl lg:px-6">
       <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open navigation" onClick={onMenuClick}>
+          <Menu className="h-5 w-5" />
+        </Button>
         <div className="hidden flex-1 items-center gap-2 rounded-md border border-slate-800 bg-slate-950/60 px-3 md:flex">
           <Search className="h-4 w-4 text-slate-500" />
           <Input className="h-9 border-0 bg-transparent px-0 focus-visible:ring-0" placeholder="Search threats, logs, reports..." />

@@ -12,7 +12,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(({ className, ...props 
     initial={{ opacity: 0, y: 12 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.28, ease: "easeOut" }}
-    className={cn("glass-panel glow-border rounded-lg text-card-foreground", className)}
+    className={cn("glass-panel glow-border surface-hover rounded-lg text-card-foreground", className)}
     {...props}
   />
 ));

@@ -11,7 +11,7 @@ export function AnimatedCard({ className, children }: { className?: string; chil
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.28, ease: "easeOut" }}
-      className={cn("glass-panel glow-border rounded-lg p-5", className)}
+      className={cn("glass-panel glow-border surface-hover rounded-lg p-5", className)}
     >
       {children}
     </motion.div>

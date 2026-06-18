@@ -48,7 +48,7 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <section className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+      <section className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
         <AnimatedCard>
           <div className="mb-5 flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-sky-400/20 bg-sky-400/10 text-sky-300">
@@ -111,7 +111,7 @@ export default function SettingsPage() {
                 </div>
               ) : null}
 
-              <Button type="submit" disabled={form.formState.isSubmitting}>
+              <Button type="submit" className="w-full sm:w-auto" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {form.formState.isSubmitting ? "Saving..." : "Save profile"}
               </Button>
@@ -119,7 +119,7 @@ export default function SettingsPage() {
           </Form>
         </AnimatedCard>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-2">
           <PlaceholderPanel
             icon={SlidersHorizontal}
             title="App preferences placeholder"
@@ -147,7 +147,7 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <section className="mt-4 grid gap-4 lg:grid-cols-3">
+      <section className="mt-5 grid gap-5 lg:grid-cols-3">
         <MiniSetting icon={Bell} title="Notifications" value="Mock alerts enabled" />
         <MiniSetting icon={Settings} title="Workspace mode" value="Single-user Phase 1" />
         <MiniSetting icon={ShieldCheck} title="Account type" value="Normal user" />
@@ -187,7 +187,7 @@ function MiniSetting({ icon: Icon, title, value }: { icon: LucideIcon; title: st
       <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-950/70 text-sky-300">
         <Icon className="h-5 w-5" />
       </div>
-      <div>
+      <div className="min-w-0">
         <p className="font-semibold text-white">{title}</p>
         <p className="text-sm text-slate-500">{value}</p>
       </div>

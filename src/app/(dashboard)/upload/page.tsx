@@ -9,6 +9,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
 import { api, type ApiLogFile } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -66,14 +67,14 @@ export default function UploadPage() {
           <h1 className="mt-2 text-3xl font-black text-white">Upload logs</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Upload logs to the NestJS backend, then trigger rule-based and AI-assisted analysis.</p>
         </div>
-        <div className="grid grid-cols-3 gap-2 rounded-lg border border-slate-800 bg-slate-950/60 p-2 text-center">
+        <div className="grid w-full grid-cols-3 gap-2 rounded-lg border border-slate-800 bg-slate-950/60 p-2 text-center sm:w-auto">
           {acceptedExtensions.map((format) => <Badge key={format} variant="muted" className="justify-center uppercase">{format}</Badge>)}
         </div>
       </div>
 
-      <section className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
+      <section className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
         <Card
-          className={cn("relative flex min-h-[380px] flex-col items-center justify-center overflow-hidden p-8 text-center transition", isDragging && "border-sky-400 bg-sky-400/10")}
+          className={cn("relative flex min-h-[380px] flex-col items-center justify-center overflow-hidden p-6 text-center transition sm:p-8", isDragging && "border-sky-400 bg-sky-400/10")}
           onDragOver={(event) => { event.preventDefault(); setIsDragging(true); }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={(event) => { event.preventDefault(); setIsDragging(false); handleFiles(event.dataTransfer.files); }}
@@ -116,9 +117,9 @@ export default function UploadPage() {
         </AnimatedCard>
       </section>
 
-      <section className="mt-4">
+      <section className="mt-5">
         <AnimatedCard className="p-0">
-          <div className="flex items-center justify-between border-b border-slate-800 p-5">
+          <div className="flex flex-col gap-3 border-b border-slate-800 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-bold text-white">Upload history</h2>
               <p className="mt-1 text-sm text-slate-500">Backend log files for your account</p>
@@ -144,7 +145,7 @@ function LogTable({ logs, analyzingId, onAnalyze }: { logs: ApiLogFile[]; analyz
         </thead>
         <tbody className="divide-y divide-slate-800">
           {logs.map((log) => (
-            <tr key={log.id}>
+            <tr key={log.id} className="transition duration-200 hover:bg-slate-900/60">
               <td className="px-5 py-4 font-semibold text-white"><FileText className="mr-2 inline h-4 w-4 text-sky-300" />{log.filename}</td>
               <td className="px-5 py-4"><Badge variant="muted">{log.fileType}</Badge></td>
               <td className="px-5 py-4 text-slate-400">{new Date(log.uploadedAt).toLocaleString()}</td>
@@ -163,5 +164,15 @@ function LogTable({ logs, analyzingId, onAnalyze }: { logs: ApiLogFile[]; analyz
 }
 
 function StateBlock({ text, error }: { text: string; error?: boolean }) {
-  return <div className={cn("p-8 text-center text-sm text-slate-400", error && "text-red-300")}>{text}</div>;
+  if (text.toLowerCase().includes("loading")) {
+    return (
+      <div className="grid gap-3 p-5">
+        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-14 w-full" />
+      </div>
+    );
+  }
+
+  return <div className={cn("empty-state m-5", error && "border-red-400/40 text-red-300")}>{text}</div>;
 }
