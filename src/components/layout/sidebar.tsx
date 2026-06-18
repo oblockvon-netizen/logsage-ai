@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Activity, BarChart3, FileText, LayoutDashboard, Settings, ShieldAlert, UploadCloud } from "lucide-react";
+import { Activity, BarChart3, FileText, LayoutDashboard, Settings, ShieldAlert, UploadCloud, UserCircle } from "lucide-react";
 import { navigationConfig } from "@/config/navigation-config";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +50,21 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      <div className="mt-8 rounded-lg border border-slate-800 bg-slate-950/60 p-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-800 text-sky-300">
+            <UserCircle className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white">Alex Morgan</p>
+            <p className="text-xs text-slate-500">Normal user</p>
+          </div>
+        </div>
+        <div className="mt-4 rounded-md border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-200">
+          Protected dashboard
+        </div>
+      </div>
     </motion.aside>
   );
 }
