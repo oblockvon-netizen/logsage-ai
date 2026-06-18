@@ -1,0 +1,13 @@
+﻿node_modules
+.next
+out
+dist
+coverage
+.env
+.env.local
+.env.*.local
+server/node_modules
+server/dist
+uploads
+*.log
+.DS_Store

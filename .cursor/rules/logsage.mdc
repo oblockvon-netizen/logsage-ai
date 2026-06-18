@@ -1,0 +1,8 @@
+---
+description: LogSage AI project rules
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+Build Phase 1 as a user-only cybersecurity SaaS. Do not add admin, teams, organizations, enterprise RBAC, or payments. Keep secrets in environment variables and validate user input on both frontend and backend.

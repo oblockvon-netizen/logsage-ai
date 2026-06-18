@@ -1,0 +1,6 @@
+<svg width="160" height="40" viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="40" height="40" rx="8" fill="#020617"/>
+  <path d="M20 7L31 12V20C31 27 26.5 31.5 20 34C13.5 31.5 9 27 9 20V12L20 7Z" fill="#38BDF8"/>
+  <path d="M16 20L19 23L25 16" stroke="#020617" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="50" y="26" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="18" font-weight="700">LogSage AI</text>
+</svg>
