@@ -24,6 +24,7 @@
     "class-transformer": "latest",
     "class-validator": "latest",
     "multer": "latest",
+    "openai": "latest",
     "passport": "latest",
     "passport-jwt": "latest",
     "reflect-metadata": "latest",

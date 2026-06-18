@@ -67,12 +67,31 @@ async function main() {
       title: "Authentication Anomaly Incident",
       summary:
         "LogSage AI identified a coordinated brute-force pattern against auth-gateway.log involving repeated SSH failures and a suspicious successful login.",
+      timeline: [
+        { time: "09:38", event: "First failed SSH login observed from 203.0.113.42." },
+        { time: "09:51", event: "Suspicious successful login appeared after repeated failures." }
+      ],
+      indicators: ["203.0.113.42", "auth-gateway", "root", "deploy"],
+      threatCategories: ["Credential Attack", "Privilege Abuse"],
+      affectedAssets: ["auth-gateway.log", "203.0.113.42", "10.0.4.18"],
+      severityBreakdown: { critical: 1, high: 1, medium: 0, low: 0 },
+      technicalFindings: [
+        "Authentication failures exceeded normal baseline.",
+        "Suspicious successful login occurred after repeated failures."
+      ],
       recommendations: [
         "Block 203.0.113.42 at the edge firewall.",
         "Review successful SSH sessions on auth-gateway.",
         "Rotate credentials for targeted accounts.",
         "Enable stronger SSH controls such as MFA or key-only access."
-      ]
+      ],
+      preventionTips: [
+        "Enforce MFA for remote access.",
+        "Alert on repeated failed logins by source IP.",
+        "Restrict SSH exposure to trusted networks."
+      ],
+      finalConclusion:
+        "Treat this as a likely credential attack until successful session ownership is confirmed."
     }
   });
 

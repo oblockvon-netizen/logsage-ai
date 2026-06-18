@@ -60,15 +60,23 @@ model Threat {
 }
 
 model Report {
-  id              String   @id @default(uuid())
-  userId          String
-  logFileId       String
-  title           String
-  summary         String
-  recommendations String[]
-  createdAt       DateTime @default(now())
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  logFile         LogFile  @relation(fields: [logFileId], references: [id], onDelete: Cascade)
+  id                   String   @id @default(uuid())
+  userId               String
+  logFileId            String
+  title                String
+  summary              String
+  timeline             Json?
+  indicators           String[]
+  threatCategories     String[]
+  affectedAssets       String[]
+  severityBreakdown    Json?
+  technicalFindings    String[]
+  recommendations      String[]
+  preventionTips       String[]
+  finalConclusion      String
+  createdAt            DateTime @default(now())
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logFile              LogFile  @relation(fields: [logFileId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([logFileId])
