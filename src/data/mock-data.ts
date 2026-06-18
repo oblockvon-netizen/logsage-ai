@@ -154,3 +154,117 @@ export const aiInsight = {
     "Rotate credentials for accounts with repeated failed login attempts."
   ]
 };
+
+export const incidentReports = [
+  {
+    id: "RPT-2026-018",
+    title: "Authentication Anomaly Incident",
+    status: "Ready",
+    generatedAt: "Today, 10:58",
+    sourceFile: "auth-gateway.log",
+    severity: "critical",
+    confidence: 94,
+    summary:
+      "LogSage AI identified a coordinated brute-force pattern against auth-gateway-01. The activity included repeated SSH failures, username rotation, and a suspicious successful login during the same analysis window.",
+    timeline: [
+      { time: "09:38", event: "First failed SSH login observed from 203.0.113.42." },
+      { time: "09:44", event: "Failed attempts expanded across root, deploy, and backup accounts." },
+      { time: "09:51", event: "Successful login pattern appeared after 52 failures." },
+      { time: "09:57", event: "AI analysis marked the sequence as critical credential attack behavior." }
+    ],
+    indicators: ["203.0.113.42", "auth-gateway-01", "root", "deploy", "/var/log/auth.log"],
+    severityBreakdown: [
+      { label: "Critical", value: 1, color: "#DC2626" },
+      { label: "High", value: 2, color: "#EF4444" },
+      { label: "Medium", value: 4, color: "#F59E0B" },
+      { label: "Low", value: 9, color: "#22C55E" }
+    ],
+    technicalFindings: [
+      "Authentication failures exceeded the normal baseline by 6.8x.",
+      "Targeted usernames match common administrative account naming patterns.",
+      "A successful login occurred inside the same source-IP activity cluster."
+    ],
+    recommendations: [
+      "Block 203.0.113.42 and review adjacent source ranges.",
+      "Rotate credentials for targeted users.",
+      "Validate all successful sessions on auth-gateway-01.",
+      "Enable stronger SSH controls such as MFA or key-only access."
+    ],
+    conclusion:
+      "This incident should be treated as a likely credential attack until session ownership is verified. Immediate containment and identity review are recommended."
+  },
+  {
+    id: "RPT-2026-017",
+    title: "Suspicious Privilege Escalation Review",
+    status: "Draft",
+    generatedAt: "Today, 10:21",
+    sourceFile: "linux-workload-07.log",
+    severity: "high",
+    confidence: 88,
+    summary:
+      "An internal shell session performed unexpected elevated commands shortly after login. The activity resembles early post-compromise privilege escalation and requires owner validation.",
+    timeline: [
+      { time: "10:03", event: "New shell session opened from 10.0.4.18." },
+      { time: "10:04", event: "Discovery commands executed against local users and services." },
+      { time: "10:05", event: "Unexpected sudo invocation detected." },
+      { time: "10:08", event: "Threat marked high severity for analyst review." }
+    ],
+    indicators: ["10.0.4.18", "linux-workload-07", "sudo", "/etc/sudoers", "interactive shell"],
+    severityBreakdown: [
+      { label: "Critical", value: 0, color: "#DC2626" },
+      { label: "High", value: 3, color: "#EF4444" },
+      { label: "Medium", value: 5, color: "#F59E0B" },
+      { label: "Low", value: 6, color: "#22C55E" }
+    ],
+    technicalFindings: [
+      "Privilege escalation occurred less than one minute after session start.",
+      "The activity originated from an internal workstation, increasing identity validation priority.",
+      "No persistence artifact is confirmed in the mock evidence."
+    ],
+    recommendations: [
+      "Confirm the session with the account owner.",
+      "Inspect process lineage and shell history.",
+      "Review sudoers changes and new scheduled jobs.",
+      "Collect endpoint telemetry from the source workstation."
+    ],
+    conclusion:
+      "The behavior is suspicious but not yet confirmed malicious. Treat it as high priority until user intent and host integrity are validated."
+  },
+  {
+    id: "RPT-2026-016",
+    title: "API Token Misuse Investigation",
+    status: "Ready",
+    generatedAt: "Yesterday, 18:34",
+    sourceFile: "api-edge.log",
+    severity: "medium",
+    confidence: 74,
+    summary:
+      "A normally low-volume API token generated elevated traffic from an unfamiliar network. The pattern may indicate token replay, automation drift, or credential exposure.",
+    timeline: [
+      { time: "17:42", event: "API token observed from a new ASN." },
+      { time: "17:47", event: "Request volume exceeded normal token baseline." },
+      { time: "17:51", event: "Multiple 403 responses appeared across sensitive endpoints." },
+      { time: "18:03", event: "Mock analysis queued the token for review." }
+    ],
+    indicators: ["198.51.100.8", "api-edge", "HTTP 403", "token replay", "/v1/users"],
+    severityBreakdown: [
+      { label: "Critical", value: 0, color: "#DC2626" },
+      { label: "High", value: 1, color: "#EF4444" },
+      { label: "Medium", value: 4, color: "#F59E0B" },
+      { label: "Low", value: 8, color: "#22C55E" }
+    ],
+    technicalFindings: [
+      "Request volume increased by 4.3x compared with the token baseline.",
+      "The source network had not previously used this token.",
+      "Denied requests suggest endpoint probing or stale automation behavior."
+    ],
+    recommendations: [
+      "Rotate the affected token.",
+      "Review endpoint paths accessed during the anomaly.",
+      "Add token usage alerting by ASN and request volume.",
+      "Verify whether a deployment changed egress networks."
+    ],
+    conclusion:
+      "The token should be rotated as a precaution. No confirmed data exposure is present in the mock evidence."
+  }
+];
