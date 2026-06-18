@@ -1,4 +1,8 @@
 import { Module } from "@nestjs/common";
+import { ThreatsService } from "./threats.service";
 
-@Module({})
+@Module({
+  providers: [ThreatsService],
+  exports: [ThreatsService]
+})
 export class ThreatsModule {}
