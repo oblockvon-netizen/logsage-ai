@@ -32,6 +32,7 @@
     "swagger-ui-express": "latest"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "latest",
     "@nestjs/cli": "latest",
     "@nestjs/schematics": "latest",
     "@nestjs/testing": "latest",
