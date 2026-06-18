@@ -36,6 +36,15 @@ export class LogsController {
       storage: memoryStorage(),
       limits: {
         fileSize: Number(process.env.MAX_UPLOAD_SIZE_MB ?? 10) * 1024 * 1024
+      },
+      fileFilter: (_request, file, callback) => {
+        const extension = getExtension(file.originalname);
+        if (!allowedExtensions.has(extension)) {
+          callback(new BadRequestException("Unsupported file type. Upload .log, .txt, or .csv files only."), false);
+          return;
+        }
+
+        callback(null, true);
       }
     })
   )

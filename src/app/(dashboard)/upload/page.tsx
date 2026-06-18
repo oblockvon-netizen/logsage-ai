@@ -12,9 +12,9 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/toast";
 import { api, type ApiLogFile } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { uploadFileSchema } from "@/lib/validations";
 
 const acceptedExtensions = [".log", ".txt", ".csv"];
-const maxFileSize = 10 * 1024 * 1024;
 
 export default function UploadPage() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -48,13 +48,11 @@ export default function UploadPage() {
     setError(null);
     const file = Array.from(files)[0];
     if (!file) return;
-    const extension = getExtension(file.name);
-    if (!acceptedExtensions.includes(extension)) {
-      setError(`"${file.name}" is not supported. Upload .log, .txt, or .csv files only.`);
-      return;
-    }
-    if (file.size > maxFileSize) {
-      setError(`"${file.name}" is too large. Maximum file size is 10 MB.`);
+    const validation = uploadFileSchema.safeParse(file);
+    if (!validation.success) {
+      const message = validation.error.issues[0]?.message ?? "Invalid file.";
+      setError(message);
+      toast({ title: "Invalid file", description: message, variant: "error" });
       return;
     }
     uploadMutation.mutate(file);
@@ -166,9 +164,4 @@ function LogTable({ logs, analyzingId, onAnalyze }: { logs: ApiLogFile[]; analyz
 
 function StateBlock({ text, error }: { text: string; error?: boolean }) {
   return <div className={cn("p-8 text-center text-sm text-slate-400", error && "text-red-300")}>{text}</div>;
-}
-
-function getExtension(fileName: string) {
-  const index = fileName.lastIndexOf(".");
-  return index === -1 ? "" : fileName.slice(index).toLowerCase();
 }

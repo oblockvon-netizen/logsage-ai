@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api, type ApiThreat } from "@/lib/api";
+import { threatFilterSchema } from "@/lib/validations";
 
 const severityBadge = { critical: "critical", high: "danger", medium: "warning", low: "success" } as const;
 
@@ -20,10 +21,14 @@ export default function ThreatsPage() {
   const threats = threatsQuery.data?.threats ?? [];
   const threatTypes = useMemo(() => ["all", ...Array.from(new Set(threats.map((threat) => threat.threatType)))], [threats]);
   const filteredThreats = useMemo(() => {
-    const q = query.toLowerCase().trim();
+    const validation = threatFilterSchema.safeParse({ query, severity, type });
+    if (!validation.success) {
+      return [];
+    }
+    const q = validation.data.query.toLowerCase();
     return threats.filter((threat) => {
       const matchesQuery = !q || [threat.threatType, threat.description, threat.sourceIp ?? "", threat.evidence, threat.aiExplanation?.simpleSummary ?? ""].join(" ").toLowerCase().includes(q);
-      return matchesQuery && (severity === "all" || threat.severity === severity) && (type === "all" || threat.threatType === type);
+      return matchesQuery && (validation.data.severity === "all" || threat.severity === validation.data.severity) && (validation.data.type === "all" || threat.threatType === validation.data.type);
     });
   }, [query, severity, threats, type]);
 
@@ -45,6 +50,7 @@ export default function ThreatsPage() {
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-slate-500" />
             <Input className="pl-9" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search threats..." />
+            {query.length > 120 ? <p className="mt-2 text-xs text-red-300">Search must be 120 characters or less.</p> : null}
           </div>
           <Select label="Severity" value={severity} onChange={setSeverity} options={["all", "critical", "high", "medium", "low"]} />
           <Select label="Threat type" value={type} onChange={setType} options={threatTypes} />

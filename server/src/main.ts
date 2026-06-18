@@ -1,4 +1,4 @@
-import { ValidationPipe } from "@nestjs/common";
+import { BadRequestException, ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
@@ -21,7 +21,16 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
-      transformOptions: { enableImplicitConversion: true }
+      transformOptions: { enableImplicitConversion: true },
+      forbidUnknownValues: true,
+      exceptionFactory: (errors) =>
+        new BadRequestException({
+          message:
+            errors
+              .flatMap((error) => Object.values(error.constraints ?? {}))
+              .filter(Boolean)
+              .join(", ") || "Request validation failed."
+        })
     })
   );
 
