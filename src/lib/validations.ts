@@ -22,3 +22,11 @@ export const registerSchema = z
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type RegisterFormValues = z.infer<typeof registerSchema>;
+
+export const profileSettingsSchema = z.object({
+  fullName: z.string().trim().min(2, "Full name must be at least 2 characters"),
+  email: emailSchema,
+  jobTitle: z.string().trim().max(80, "Job title must be 80 characters or less").optional()
+});
+
+export type ProfileSettingsFormValues = z.infer<typeof profileSettingsSchema>;
