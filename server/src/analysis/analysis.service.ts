@@ -1,8 +1,15 @@
 import { Injectable } from "@nestjs/common";
+import { threatDetectionRules } from "./rules";
+import type { DetectedThreat } from "./types/detected-threat.type";
+import { parseLogContent } from "./utils/log-parser";
 
 @Injectable()
 export class AnalysisService {
-  getModuleStatus() {
-    return "Analysis module ready for log threat detection workflows.";
+  analyzeRawContent(rawContent: string): DetectedThreat[] {
+    const parsedLines = parseLogContent(rawContent);
+
+    return threatDetectionRules
+      .flatMap((rule) => rule(parsedLines))
+      .sort((a, b) => b.score - a.score);
   }
 }
