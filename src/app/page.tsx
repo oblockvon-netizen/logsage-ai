@@ -80,8 +80,12 @@ function Navbar() {
           <a href="#reports" className="transition hover:text-white">Reports</a>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" className="hidden sm:inline-flex">View Demo</Button>
-          <Button>Start Analyzing Logs</Button>
+          <Button asChild variant="ghost" className="hidden sm:inline-flex">
+            <a href="#dashboard-preview">View Demo</a>
+          </Button>
+          <Button asChild>
+            <Link href="/register">Start Analyzing Logs</Link>
+          </Button>
         </div>
       </nav>
     </header>
@@ -100,11 +104,15 @@ function Hero() {
           LogSage AI gives security learners, analysts, and builders a polished workspace for uploading logs, spotting threats, and drafting incident reports from mock-ready intelligence.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Button size="lg">
-            Start Analyzing Logs
-            <ArrowRight className="h-4 w-4" />
+          <Button asChild size="lg">
+            <Link href="/register">
+              Start Analyzing Logs
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </Button>
-          <Button variant="outline" size="lg">View Demo</Button>
+          <Button asChild variant="outline" size="lg">
+            <a href="#dashboard-preview">View Demo</a>
+          </Button>
         </div>
         <div className="mt-8 grid max-w-xl grid-cols-2 gap-3 sm:grid-cols-4">
           {stats.map((stat) => (
@@ -172,7 +180,7 @@ function HeroDashboard() {
 
 function DashboardPreview() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14">
+    <section id="dashboard-preview" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-14">
       <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <Badge variant="muted">Dashboard preview</Badge>
@@ -321,8 +329,12 @@ function CTASection() {
           Start with mock data today, then connect authentication, uploads, AI analysis, and reporting in the next build phase.
         </p>
         <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <Button size="lg">Start Analyzing Logs</Button>
-          <Button variant="outline" size="lg">View Demo</Button>
+          <Button asChild size="lg">
+            <Link href="/register">Start Analyzing Logs</Link>
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <a href="#dashboard-preview">View Demo</a>
+          </Button>
         </div>
       </div>
     </section>
